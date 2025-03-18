@@ -30,20 +30,6 @@ function Element:New(Idx, Config)
 	Slider.SetTitle = SliderFrame.SetTitle
 	Slider.SetDesc = SliderFrame.SetDesc
 
-	local SliderDot = New("ImageLabel", {
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.new(0, -7, 0.5, 0),
-		Size = UDim2.fromOffset(20, 20),
-		Image = "http://www.roblox.com/asset/?id=12266946128",
-		ThemeTag = { ImageColor3 = "Accent" },
-	})
-
-	local SliderRail = New("Frame", {
-		BackgroundTransparency = 1,
-		Position = UDim2.fromOffset(7, 0),
-		Size = UDim2.new(1, -14, 1, 0),
-	}, { SliderDot })
-
 	local SliderFill = New("Frame", {
 		Size = UDim2.new(0, 0, 1, 0),
 		ThemeTag = { BackgroundColor3 = "Accent" },
@@ -63,7 +49,7 @@ function Element:New(Idx, Config)
 		ThemeTag = { TextColor3 = "SubText" },
 	})
 
-	local SliderInner = New("Frame", {
+	local SliderRail = New("Frame", {
 		Size = UDim2.new(1, 0, 0, 6),
 		AnchorPoint = Vector2.new(1, 0.5),
 		Position = UDim2.new(1, -10, 0.5, 0),
@@ -75,7 +61,6 @@ function Element:New(Idx, Config)
 		New("UISizeConstraint", { MaxSize = Vector2.new(150, math.huge) }),
 		SliderDisplay,
 		SliderFill,
-		SliderRail,
 	})
 
 	local function UpdateValue(Input)
@@ -105,7 +90,6 @@ function Element:New(Idx, Config)
 
 	function Slider:SetValue(Value)
 		self.Value = Library:Round(math.clamp(Value, self.Min, self.Max), self.Rounding)
-		SliderDot.Position = UDim2.new((self.Value - self.Min) / (self.Max - self.Min), -7, 0.5, 0)
 		SliderFill.Size = UDim2.fromScale((self.Value - self.Min) / (self.Max - self.Min), 1)
 		SliderDisplay.Text = tostring(self.Value)
 
@@ -123,4 +107,4 @@ function Element:New(Idx, Config)
 	return Slider
 end
 
-return Element,
+return Element
