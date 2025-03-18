@@ -1,4 +1,4 @@
-local UserInputService = game:GetService("UserInputService")
+--[[local UserInputService = game:GetService("UserInputService")
 local Root = script.Parent.Parent
 local Creator = require(Root.Creator)
 
@@ -158,4 +158,4 @@ function Element:New(Idx, Config)
 	return Slider
 end
 
-return Element
+return Element]]--
