@@ -22,7 +22,7 @@ function Element:New(Idx, Config)
 	}
 
 	local Dragging = false
-	local Touching = false
+	local LastInput = nil
 
 	local SliderFrame = require(Components.Element)(Config.Title, Config.Description, self.Container, false)
 	SliderFrame.DescLabel.Size = UDim2.new(1, -170, 0, 14)
@@ -31,9 +31,9 @@ function Element:New(Idx, Config)
 	Slider.SetDesc = SliderFrame.SetDesc
 
 	local SliderDot = New("ImageLabel", {
-		AnchorPoint = Vector2.new(0, 0.5),
+		AnchorPoint = Vector2.new(0.5, 0.5),
 		Position = UDim2.new(0, -7, 0.5, 0),
-		Size = UDim2.fromOffset(14, 14),
+		Size = UDim2.fromOffset(20, 20),
 		Image = "http://www.roblox.com/asset/?id=12266946128",
 		ThemeTag = { ImageColor3 = "Accent" },
 	})
@@ -64,7 +64,7 @@ function Element:New(Idx, Config)
 	})
 
 	local SliderInner = New("Frame", {
-		Size = UDim2.new(1, 0, 0, 4),
+		Size = UDim2.new(1, 0, 0, 6),
 		AnchorPoint = Vector2.new(1, 0.5),
 		Position = UDim2.new(1, -10, 0.5, 0),
 		BackgroundTransparency = 0.4,
@@ -83,25 +83,23 @@ function Element:New(Idx, Config)
 		Slider:SetValue(Slider.Min + ((Slider.Max - Slider.Min) * SizeScale))
 	end
 
-	Creator.AddSignal(SliderDot.InputBegan, function(Input)
-		if Input.UserInputType == Enum.UserInputType.MouseButton1 then
+	Creator.AddSignal(SliderRail.InputBegan, function(Input)
+		if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
 			Dragging = true
-		elseif Input.UserInputType == Enum.UserInputType.Touch then
-			Touching = true
-		end
-	end)
-
-	Creator.AddSignal(SliderDot.InputEnded, function(Input)
-		if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-			Dragging = false
-		elseif Input.UserInputType == Enum.UserInputType.Touch then
-			Touching = false
+			LastInput = Input
+			UpdateValue(Input)
 		end
 	end)
 
 	Creator.AddSignal(UserInputService.InputChanged, function(Input)
-		if (Dragging or Touching) and (Input.UserInputType == Enum.UserInputType.MouseMovement or Input.UserInputType == Enum.UserInputType.Touch) then
+		if Dragging and Input == LastInput then
 			UpdateValue(Input)
+		end
+	end)
+
+	Creator.AddSignal(UserInputService.InputEnded, function(Input)
+		if Input == LastInput then
+			Dragging = false
 		end
 	end)
 
@@ -125,4 +123,4 @@ function Element:New(Idx, Config)
 	return Slider
 end
 
-return Element
+return Element,
